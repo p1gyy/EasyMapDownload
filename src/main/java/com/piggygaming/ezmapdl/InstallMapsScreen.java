@@ -13,6 +13,7 @@ import net.minecraft.text.Text;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import static com.piggygaming.ezmapdl.FileUtils.*;
 
@@ -55,20 +56,22 @@ public class InstallMapsScreen extends Screen {
 
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Confirm"), (button) -> {
             File newFile = new File(savesDirectory.getPath() + "\\" + lastModified.getName());
+            this.client.setScreen(new LoadingScreen(this.parent));
             if (lastModified.renameTo(newFile)) {
                 try {
                     if (fileNotInRootDir(newFile, "level.dat")) {
-                        unzipFile(newFile.getPath(), savesDirectory);
+                        unzipThread thread = new unzipThread(newFile.getPath(), savesDirectory, this.client);
+                        thread.start();
                     } else {
                         File dir = new File(savesDirectory.getPath() + "\\" + newFile.getName().replaceFirst("[.][^.]+$", "")); dir.mkdirs();
-                        unzipFile(newFile.getPath(), dir);
+                        unzipThread thread = new unzipThread(newFile.getPath(), dir, this.client);
+                        thread.start();
                     }
-                    newFile.delete();
                 } catch (Exception e) {
                     errorScreen(e);
                 }
             }
-            this.client.setScreen(new SelectWorldScreen(new TitleScreen()));
+
         }).dimensions(this.width / 2 - 105, this.height /2 + 40, 100, 20).build());
         this.addDrawableChild(ButtonWidget.builder(ScreenTexts.CANCEL, (button) -> {
             this.client.setScreen(this.parent);
@@ -77,7 +80,7 @@ public class InstallMapsScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.renderBackground(context);
+        super.renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, this.height / 2 - 40, 16777215);
         context.drawCenteredTextWithShadow(this.textRenderer, Text.literal(lastModified.getName()), this.width / 2, this.height / 2, 16777215);

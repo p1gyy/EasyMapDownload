@@ -5,7 +5,7 @@
 	"name": "EasyMapDownload",
 	"description": "Adds a button to the select world screen to instantly install minecraft worlds",
 	"authors": [
-		"PiggyGaming"
+		"Piggy Gaming"
 	],
 	"contact": {
 		"homepage": "https://piggygaming.com",
@@ -27,7 +27,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.14.21",
-		"minecraft": "~1.20.1",
+		"minecraft": "~1.20.2",
 		"java": ">=17",
 		"fabric-api": "*"
 	},
