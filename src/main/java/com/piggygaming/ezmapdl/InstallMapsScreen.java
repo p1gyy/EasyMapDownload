@@ -29,7 +29,7 @@ public class InstallMapsScreen extends Screen {
         super(Text.literal("Is this file correct?"));
         this.parent = parent;
         this.client = MinecraftClient.getInstance();
-        this.savesDirectory = new File(this.client.runDirectory.getPath() + "\\saves");
+        this.savesDirectory = new File(this.client.runDirectory.getPath() + File.separator + "saves");
     }
 
     private void errorScreen(String errorMSG) {
@@ -45,7 +45,7 @@ public class InstallMapsScreen extends Screen {
     protected void init() {
 
         try {
-            this.lastModified = getLastModified(System.getProperty("user.home") + "\\Downloads");
+            this.lastModified = getLastModified(System.getProperty("user.home") + File.separator + "Downloads");
         } catch (Exception e) {
             errorScreen(e);
         }
@@ -55,7 +55,7 @@ public class InstallMapsScreen extends Screen {
         }
 
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Confirm"), (button) -> {
-            File newFile = new File(savesDirectory.getPath() + "\\" + lastModified.getName());
+            File newFile = new File(savesDirectory.getPath() + File.separator + lastModified.getName());
             this.client.setScreen(new LoadingScreen(this.parent));
             if (lastModified.renameTo(newFile)) {
                 try {
@@ -63,7 +63,7 @@ public class InstallMapsScreen extends Screen {
                         unzipThread thread = new unzipThread(newFile.getPath(), savesDirectory, this.client);
                         thread.start();
                     } else {
-                        File dir = new File(savesDirectory.getPath() + "\\" + newFile.getName().replaceFirst("[.][^.]+$", "")); dir.mkdirs();
+                        File dir = new File(savesDirectory.getPath() + File.separator + newFile.getName().replaceFirst("[.][^.]+$", "")); dir.mkdirs();
                         unzipThread thread = new unzipThread(newFile.getPath(), dir, this.client);
                         thread.start();
                     }
